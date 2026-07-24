@@ -59,6 +59,7 @@ function render() {
 function setView(view) {
   state.view = view;
   document.querySelectorAll(".tab").forEach(b => b.classList.toggle("active", b.dataset.view === view));
+  $("#stock-method-button").hidden = view !== "stocks";
   const signals = [...new Set(state.data[view].map(r => r.signal).filter(Boolean))];
   $("#signal-filter").innerHTML = `<option value="">全部信号</option>${signals.map(s => `<option>${s}</option>`).join("")}`;
   $("#search").value = "";
@@ -85,3 +86,8 @@ $("#lock-button").addEventListener("click", () => location.reload());
 document.querySelectorAll(".tab").forEach(b => b.addEventListener("click", () => setView(b.dataset.view)));
 $("#search").addEventListener("input", render);
 $("#signal-filter").addEventListener("change", render);
+$("#stock-method-button").addEventListener("click", () => $("#stock-method-dialog").showModal());
+$("#close-method-button").addEventListener("click", () => $("#stock-method-dialog").close());
+$("#stock-method-dialog").addEventListener("click", e => {
+  if (e.target === $("#stock-method-dialog")) $("#stock-method-dialog").close();
+});
