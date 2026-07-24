@@ -32,7 +32,9 @@ const columns = {
 const pct = new Set(["premium","mom63","mom126","max_dd","revenue_growth","profit_growth","roe"]);
 const money = new Set(["amount"]);
 function value(key, raw) {
-  if (raw === "" || raw == null || Number.isNaN(Number(raw))) return "—";
+  if (raw === "" || raw == null) return "—";
+  if (typeof raw === "string" && Number.isNaN(Number(raw))) return raw;
+  if (Number.isNaN(Number(raw))) return "—";
   if (pct.has(key)) return `${fmt.format(Number(raw) * (["premium","mom63","mom126","max_dd"].includes(key) ? 100 : 1))}%`;
   if (money.has(key)) return Number(raw) >= 1e8 ? `${fmt.format(Number(raw)/1e8)}亿` : fmt.format(raw);
   if (key === "score" || key.endsWith("_score")) return fmt.format(raw);
