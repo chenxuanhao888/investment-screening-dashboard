@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>跨市场投资筛选台</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="shell">
+    <section id="lock" class="lock-card">
+      <div class="brand">CXH · 投资研究</div>
+      <h1>跨市场投资筛选台</h1>
+      <p>ETF 与 A 股个股评分数据已加密。输入访问密码后，仅在当前浏览器内解密。</p>
+      <form id="unlock-form">
+        <label for="password">访问密码</label>
+        <div class="password-row">
+          <input id="password" type="password" autocomplete="current-password" required autofocus>
+          <button type="submit">解锁</button>
+        </div>
+        <div id="error" class="error" role="alert"></div>
+      </form>
+      <small>密码不会上传或保存；刷新页面后需要重新输入。</small>
+    </section>
+
+    <section id="dashboard" class="dashboard" hidden>
+      <header>
+        <div>
+          <div class="brand">CXH · 投资研究</div>
+          <h1>跨市场投资筛选台</h1>
+          <p id="updated"></p>
+        </div>
+        <button id="lock-button" class="ghost">锁定</button>
+      </header>
+
+      <section class="notice">
+        模型结果用于研究与排序，不构成收益承诺或个性化投资建议。场内跨境 ETF 应结合实时溢价、流动性与额度判断。
+      </section>
+
+      <nav class="tabs" aria-label="数据类型">
+        <button class="tab active" data-view="etfs">场内 ETF</button>
+        <button class="tab" data-view="stocks">A 股个股</button>
+      </nav>
+
+      <section class="toolbar">
+        <input id="search" type="search" placeholder="搜索代码、名称、市场或信号">
+        <select id="signal-filter"><option value="">全部信号</option></select>
+        <span id="count"></span>
+      </section>
+
+      <div class="table-wrap">
+        <table>
+          <thead id="thead"></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <p class="footnote">数据来自模型最近一次离线计算，不是实时行情。买入前请在券商软件核对最新价格、成交额和溢价率。</p>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
