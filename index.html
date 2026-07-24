@@ -41,22 +41,51 @@
       <nav class="tabs" aria-label="数据类型">
         <button class="tab active" data-view="etfs">场内 ETF</button>
         <button class="tab" data-view="stocks">A 股个股</button>
+        <button class="tab" data-view="validation">模型验证与买点</button>
       </nav>
 
-      <section class="toolbar">
+      <section id="ranking-toolbar" class="toolbar">
         <input id="search" type="search" placeholder="搜索代码、名称、市场或信号">
         <select id="signal-filter"><option value="">全部信号</option></select>
         <button id="stock-method-button" class="method-button" type="button" hidden>查看 A 股评分方法</button>
         <span id="count"></span>
       </section>
 
-      <div class="table-wrap">
+      <div id="ranking-table" class="table-wrap">
         <table>
           <thead id="thead"></thead>
           <tbody id="tbody"></tbody>
         </table>
       </div>
-      <p class="footnote">数据来自模型最近一次离线计算，不是实时行情。买入前请在券商软件核对最新价格、成交额和溢价率。</p>
+      <p id="ranking-footnote" class="footnote">数据来自模型最近一次离线计算，不是实时行情。买入前请在券商软件核对最新价格、成交额和溢价率。</p>
+
+      <section id="validation-panel" class="validation-panel" hidden>
+        <div id="validation-summary" class="validation-summary"></div>
+        <div class="validation-columns">
+          <article class="validation-card">
+            <h2>滚动样本外结果</h2>
+            <div id="validation-metrics" class="metric-grid"></div>
+          </article>
+          <article class="validation-card">
+            <h2>当前买点判断</h2>
+            <div id="market-state"></div>
+            <p class="validation-help">买点只是一种风险条件判断，不代表确定上涨；价格必须在券商软件中重新核对。</p>
+          </article>
+        </div>
+        <article class="validation-card">
+          <h2>技术择时排名与参考位置</h2>
+          <div class="table-wrap compact-table">
+            <table>
+              <thead><tr><th>代码</th><th>名称</th><th>择时分</th><th>买点状态</th><th>参考价</th><th>MA20</th><th>MA120</th><th>失效参考</th></tr></thead>
+              <tbody id="timing-tbody"></tbody>
+            </table>
+          </div>
+        </article>
+        <article class="validation-card caution-card">
+          <h2>可靠度边界</h2>
+          <ul id="validation-limitations"></ul>
+        </article>
+      </section>
     </section>
   </main>
 
@@ -100,6 +129,6 @@
     <p class="dialog-note">注意：百分位分数会随股票池、行情和财务数据更新而变化。模型只用于缩小研究范围，仍需核查财报、公告、行业周期、公司治理及买入估值。</p>
   </dialog>
 
-  <script src="app.js?v=3"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>
