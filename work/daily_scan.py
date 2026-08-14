@@ -167,12 +167,27 @@ def score_rows(rows: list[dict], weights=None) -> list[dict]:
         components = [momentum, liquidity, quality, value, risk, crowding]
         agreement = 100 - min(100, statistics.pstdev(components) * 2.3)
         score = sum(weights[k] * value for k, value in zip(weights, components)) + .05 * agreement
+        # Price plan: wait for a volatility-adjusted pullback, then define the
+        # exit and invalidation levels before entry. These are model reference
+        # levels, not guaranteed fills or return forecasts.
+        amplitude = min(12, max(2, row.get("amplitude") or 4))
+        chase_penalty = max(0, raw_change) * .06
+        buy_discount = min(4.5, max(1.2, .8 + amplitude * .22 + chase_penalty))
+        recommended_buy = row["price"] * (1 - buy_discount / 100)
+        target_return = min(16, max(7, 5 + amplitude * .9 + (risk / 100) * 2))
+        stop_return = min(8, max(4, 3 + amplitude * .45))
         row.update({
             "score": round(min(100, max(0, score)), 2),
             "trend_score": round(momentum, 2), "confirm_score": round(momentum, 2),
             "value_score": round(value, 2), "quality_score": round(quality, 2), "liquidity_score": round(liquidity, 2),
             "risk_score": round(risk, 2), "crowding_score": round(crowding, 2),
             "agreement_score": round(agreement, 2),
+            "recommended_buy_price": round(recommended_buy, 2),
+            "recommended_sell_price": round(recommended_buy * (1 + target_return / 100), 2),
+            "stop_loss_price": round(recommended_buy * (1 - stop_return / 100), 2),
+            "buy_discount_pct": round(buy_discount, 2),
+            "target_return_pct": round(target_return, 2),
+            "price_plan": "回踩买入；目标价止盈；止损价失效",
         })
     return sorted(eligible, key=lambda r: (-r["score"], r["code"]))
 
@@ -206,11 +221,12 @@ def build_snapshot() -> dict:
             "score_bounds_ok": all(0 <= r["score"] <= 100 for r in ranked),
             "top100_count": min(100, len(ranked)), **tests,
         },
-        "model_version": "full-a-v2-sina",
+        "model_version": "full-a-v3-price-plan",
         "data_source": "新浪财经公开全A股行情榜单",
         "weights": {**DEFAULT_WEIGHTS, "agreement_bonus": .05},
         "limitations": [
             "横截面快照用于候选池排序，不是未来收益保证。",
+            "推荐买卖价按当日收盘价、振幅和风险分动态计算，仅为下一交易日研究参考；跳空、涨跌停和公告可能使其失效。",
             "公开快照不含一致口径的历史财务因子，规模质量只作为流动性与经营稳定性的弱代理。",
             "历史榜单从自动任务启用日起逐交易日积累，需持续观察未来收益、换手和回撤后再校准。",
         ],
