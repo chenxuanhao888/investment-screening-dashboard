@@ -1,0 +1,23 @@
+{
+  "model_version": "full-a-v3-price-plan-frozen-20260814",
+  "frozen_at": "2026-08-14",
+  "minimum_forward_months": 6,
+  "preferred_forward_months": 12,
+  "ranking_weights": {
+    "momentum": 0.20,
+    "liquidity": 0.18,
+    "quality": 0.15,
+    "value": 0.18,
+    "risk": 0.17,
+    "crowding": 0.12,
+    "agreement_bonus": 0.05
+  },
+  "execution_assumptions": {
+    "entry_slippage_bps": 10,
+    "exit_slippage_bps": 10,
+    "maximum_holding_days": 20,
+    "same_day_target_and_stop": "stop_first",
+    "one_price_limit_board": "not_tradeable"
+  },
+  "change_policy": "Any parameter change requires a new model_version and restarts the forward-validation clock."
+}

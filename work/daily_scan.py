@@ -83,7 +83,9 @@ def normalize_rows(raw: list[dict]) -> list[dict]:
         amplitude = None if not settlement or high is None or low is None else (high - low) / settlement * 100
         rows.append({
             "code": code, "name": name, "exchange": str(item.get("symbol") or "")[:2].upper(),
-            "price": number(item.get("trade")), "pct_change": number(item.get("changepercent")),
+            "price": number(item.get("trade")), "open": number(item.get("open")),
+            "high": high, "low": low, "previous_close": settlement,
+            "pct_change": number(item.get("changepercent")),
             "turnover": number(item.get("turnoverratio")), "amount": number(item.get("amount")),
             "volume": number(item.get("volume")), "amplitude": amplitude,
             "market_cap": (number(item.get("mktcap")) or 0) * 10_000,
@@ -215,13 +217,21 @@ def build_snapshot() -> dict:
         "generated_at": dt.datetime.now().astimezone().isoformat(timespec="seconds"),
         "universe_count": len(rows), "eligible_count": len(ranked),
         "excluded_count": len(rows) - len(ranked), "top100": ranked[:100],
+        # Minimal all-market tape retained only in the current encrypted payload.
+        # It lets tomorrow's job evaluate every signal even when a stock drops
+        # out of the new top 100. Historical rankings remain compact.
+        "evaluation_quotes": [{
+            "code": r["code"], "name": r["name"], "open": r.get("open"),
+            "high": r.get("high"), "low": r.get("low"), "close": r.get("price"),
+            "previous_close": r.get("previous_close"), "pct_change": r.get("pct_change"),
+        } for r in rows],
         "tests": {
             "duplicate_codes": len(rows) - len({r["code"] for r in rows}),
             "scores_sorted": all(ranked[i]["score"] >= ranked[i + 1]["score"] for i in range(len(ranked) - 1)),
             "score_bounds_ok": all(0 <= r["score"] <= 100 for r in ranked),
             "top100_count": min(100, len(ranked)), **tests,
         },
-        "model_version": "full-a-v3-price-plan",
+        "model_version": "full-a-v3-price-plan-frozen-20260814",
         "data_source": "新浪财经公开全A股行情榜单",
         "weights": {**DEFAULT_WEIGHTS, "agreement_bonus": .05},
         "limitations": [
