@@ -1,134 +1,15 @@
-<!doctype html>
-<html lang="zh-CN">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="color-scheme" content="dark">
-  <title>跨市场投资筛选台</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <main class="shell">
-    <section id="lock" class="lock-card">
-      <div class="brand">CXH · 投资研究</div>
-      <h1>跨市场投资筛选台</h1>
-      <p>ETF 与 A 股个股评分数据已加密。输入访问密码后，仅在当前浏览器内解密。</p>
-      <form id="unlock-form">
-        <label for="password">访问密码</label>
-        <div class="password-row">
-          <input id="password" type="password" autocomplete="current-password" required autofocus>
-          <button type="submit">解锁</button>
-        </div>
-        <div id="error" class="error" role="alert"></div>
-      </form>
-      <small>密码不会上传或保存；刷新页面后需要重新输入。</small>
-    </section>
-
-    <section id="dashboard" class="dashboard" hidden>
-      <header>
-        <div>
-          <div class="brand">CXH · 投资研究</div>
-          <h1>跨市场投资筛选台</h1>
-          <p id="updated"></p>
-        </div>
-        <button id="lock-button" class="ghost">锁定</button>
-      </header>
-
-      <section class="notice">
-        模型结果用于研究与排序，不构成收益承诺或个性化投资建议。场内跨境 ETF 应结合实时溢价、流动性与额度判断。
-      </section>
-
-      <nav class="tabs" aria-label="数据类型">
-        <button class="tab active" data-view="etfs">场内 ETF</button>
-        <button class="tab" data-view="stocks">A 股个股</button>
-        <button class="tab" data-view="validation">模型验证与买点</button>
-      </nav>
-
-      <section id="ranking-toolbar" class="toolbar">
-        <input id="search" type="search" placeholder="搜索代码、名称、市场或信号">
-        <select id="signal-filter"><option value="">全部信号</option></select>
-        <button id="stock-method-button" class="method-button" type="button" hidden>查看 A 股评分方法</button>
-        <span id="count"></span>
-      </section>
-
-      <div id="ranking-table" class="table-wrap">
-        <table>
-          <thead id="thead"></thead>
-          <tbody id="tbody"></tbody>
-        </table>
-      </div>
-      <p id="ranking-footnote" class="footnote">数据来自模型最近一次离线计算，不是实时行情。买入前请在券商软件核对最新价格、成交额和溢价率。</p>
-
-      <section id="validation-panel" class="validation-panel" hidden>
-        <div id="validation-summary" class="validation-summary"></div>
-        <div class="validation-columns">
-          <article class="validation-card">
-            <h2>滚动样本外结果</h2>
-            <div id="validation-metrics" class="metric-grid"></div>
-          </article>
-          <article class="validation-card">
-            <h2>当前买点判断</h2>
-            <div id="market-state"></div>
-            <p class="validation-help">买点只是一种风险条件判断，不代表确定上涨；价格必须在券商软件中重新核对。</p>
-          </article>
-        </div>
-        <article class="validation-card">
-          <h2>技术择时排名与参考位置</h2>
-          <div class="table-wrap compact-table">
-            <table>
-              <thead><tr><th>代码</th><th>名称</th><th>择时分</th><th>买点状态</th><th>参考价</th><th>MA20</th><th>MA120</th><th>失效参考</th></tr></thead>
-              <tbody id="timing-tbody"></tbody>
-            </table>
-          </div>
-        </article>
-        <article class="validation-card caution-card">
-          <h2>可靠度边界</h2>
-          <ul id="validation-limitations"></ul>
-        </article>
-      </section>
-    </section>
-  </main>
-
-  <dialog id="stock-method-dialog" class="method-dialog">
-    <div class="dialog-head">
-      <div>
-        <div class="brand">MODEL EXPLAINER</div>
-        <h2>A 股个股如何评分与选取</h2>
-      </div>
-      <button id="close-method-button" class="icon-button" type="button" aria-label="关闭评分说明">×</button>
-    </div>
-    <p class="dialog-lead">先在可交易股票池内做横向百分位评分，再用硬性风险规则决定最终信号。总分高不等于自动买入。</p>
-
-    <section class="formula">
-      <strong>总分（0–100）</strong>
-      <code>质量 25% + 估值 20% + 趋势 25% + 相对强弱 10% + 低波动 10% + 回撤 5% + 流动性 5%</code>
-    </section>
-
-    <div class="method-grid">
-      <article><b>质量 · 25%</b><span>ROE 50% + 净利润增长 30% + 营收增长 20%。增长率先缩尾，降低极端值干扰。</span></article>
-      <article><b>估值 · 20%</b><span>PE 70% + PB 30%。采用同池反向百分位，估值越低得分越高；无效或极端估值不得分。</span></article>
-      <article><b>趋势 · 25%</b><span>依据价格相对多条均线的位置计算趋势状态；满足的趋势条件越多，分数越高。</span></article>
-      <article><b>相对强弱 · 10%</b><span>63 日动量与 126 日动量各占一半，与股票池中其他股票横向比较。</span></article>
-      <article><b>低波动 · 10%</b><span>年化波动率越低，百分位得分越高，用于抑制高波动标的。</span></article>
-      <article><b>回撤 · 5%</b><span>历史最大回撤越小，得分越高，衡量曾经出现的下行伤害。</span></article>
-      <article><b>流动性 · 5%</b><span>成交额取对数后做百分位评分，兼顾可交易性并降低超大成交额的支配效应。</span></article>
-    </div>
-
-    <section class="rule-box">
-      <h3>硬性风险规则</h3>
-      <p>任一条件触发即标记“回避”：成交额低于模型门槛、市值低于门槛、PE 无效或亏损、ROE 低于 3%或缺失、均线全面偏弱。</p>
-    </section>
-
-    <section class="signal-grid">
-      <div><span class="signal">重点候选</span><p>总分 ≥ 75，且至少满足 2/3 的趋势条件，并且未触发硬性风险规则。</p></div>
-      <div><span class="signal">观察</span><p>总分 ≥ 65，未触发硬性风险规则，但尚未达到重点候选标准。</p></div>
-      <div><span class="signal">等待</span><p>总分低于 65，且未触发硬性风险规则。</p></div>
-      <div><span class="signal danger-signal">回避</span><p>触发一项或多项硬性风险规则；即使总分较高也不改变该信号。</p></div>
-    </section>
-
-    <p class="dialog-note">注意：百分位分数会随股票池、行情和财务数据更新而变化。模型只用于缩小研究范围，仍需核查财报、公告、行业周期、公司治理及买入估值。</p>
-  </dialog>
-
-  <script src="app.js?v=4"></script>
-</body>
-</html>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><title>跨市场投资筛选台</title><link rel="stylesheet" href="styles.css?v=7"></head><body>
+<main class="shell">
+  <section id="lock" class="lock-card"><div class="brand">CXH · 投资研究</div><h1>跨市场投资筛选台</h1><p>全市场评分和历史榜单均已加密，仅在当前浏览器中解密。</p><form id="unlock-form"><label for="password">访问密码</label><div class="password-row"><input id="password" type="password" autocomplete="current-password" required autofocus><button type="submit">解锁</button></div><div id="error" class="error" role="alert"></div></form><small>密码不会上传或保存；刷新后需要重新输入。</small></section>
+  <section id="dashboard" hidden>
+    <header><div><div class="brand">CXH · 投资研究</div><h1>跨市场投资筛选台</h1><p id="updated"></p></div><button id="lock-button" class="ghost">锁定</button></header>
+    <section class="notice">评分仅用于缩小研究范围，不构成收益承诺。交易前必须核对实时价格、公告、停复牌、涨跌停与流动性。</section>
+    <nav class="tabs" aria-label="数据类型"><button class="tab active" data-view="daily">今日全A前100</button><button class="tab" data-view="history">历史榜单</button><button class="tab" data-view="etfs">场内ETF</button><button class="tab" data-view="stocks">原A股模型</button><button class="tab" data-view="validation">模型验证</button></nav>
+    <section id="summary" class="summary-grid"></section>
+    <section id="toolbar" class="toolbar"><input id="search" type="search" placeholder="搜索代码或名称"><select id="history-date" hidden></select><span id="count"></span></section>
+    <div id="table-wrap" class="table-wrap"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div>
+    <section id="empty" class="empty" hidden></section>
+    <section id="validation-panel" hidden></section>
+    <p class="footnote">全市场历史从自动日更启用日起逐交易日累积；每个日期保留当时的模型版本和前100结果，不回写改分。</p>
+  </section>
+</main><script src="app.js?v=7"></script></body></html>
