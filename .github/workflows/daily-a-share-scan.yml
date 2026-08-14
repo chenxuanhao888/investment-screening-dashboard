@@ -1,0 +1,39 @@
+name: Daily full A-share scan
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "35 8 * * 1-5"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-a-share-scan
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Scan full A-share universe
+        run: python work/daily_scan.py
+      - name: Append encrypted daily history
+        env:
+          DASHBOARD_PASSWORD: ${{ secrets.DASHBOARD_PASSWORD }}
+        run: node work/update_encrypted_payload.mjs encrypted-data.json work/daily_snapshot.json
+      - name: Commit changed encrypted payload
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add encrypted-data.json
+          git diff --cached --quiet && exit 0
+          git commit -m "每日更新全A股前100榜单"
+          git push
