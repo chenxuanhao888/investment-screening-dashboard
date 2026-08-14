@@ -3,7 +3,7 @@ const $=s=>document.querySelector(s);const b64=s=>Uint8Array.from(atob(s),c=>c.c
 const esc=v=>String(v??"—").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 async function decrypt(password){const p=await fetch("encrypted-data.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw Error();return r.json()});const base=await crypto.subtle.importKey("raw",new TextEncoder().encode(password),"PBKDF2",false,["deriveKey"]);const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:b64(p.salt),iterations:p.iterations,hash:"SHA-256"},base,{name:"AES-GCM",length:256},false,["decrypt"]);const clear=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(p.iv)},key,b64(p.ciphertext));return JSON.parse(new TextDecoder().decode(clear))}
 const columns={
- daily:[["rank","排名"],["code","代码"],["name","名称"],["score","总分"],["price","价格"],["pct_change","当日涨跌"],["return_60d","60日涨跌"],["return_ytd","年内涨跌"],["pe_ttm","PE"],["pb","PB"],["amount","成交额"],["trend_score","趋势"],["value_score","估值"],["risk_score","低风险"]],
+ daily:[["rank","排名"],["code","代码"],["name","名称"],["score","总分"],["price","现价"],["recommended_buy_price","推荐买入价"],["recommended_sell_price","推荐卖出价"],["stop_loss_price","止损价"],["pct_change","当日涨跌"],["pe_ttm","PE"],["pb","PB"],["amount","成交额"],["trend_score","趋势"],["value_score","估值"],["risk_score","低风险"]],
  etfs:[["code","代码"],["name","名称"],["region","市场"],["signal","信号"],["score","总分"],["price","价格"],["premium","溢价率"],["amount","成交额"],["mom63","63日动量"],["mom126","126日动量"]],
  stocks:[["code","代码"],["name","名称"],["signal","信号"],["score","总分"],["quality_score","质量"],["value_score","估值"],["pe","PE"],["pb","PB"],["roe","ROE"],["mom126","126日动量"],["buy_state","买点判断"]]
 };

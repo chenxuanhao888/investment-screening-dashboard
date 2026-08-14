@@ -1,9 +1,9 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><title>跨市场投资筛选台</title><link rel="stylesheet" href="styles.css?v=7"></head><body>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><title>跨市场投资筛选台</title><link rel="stylesheet" href="styles.css?v=8"></head><body>
 <main class="shell">
   <section id="lock" class="lock-card"><div class="brand">CXH · 投资研究</div><h1>跨市场投资筛选台</h1><p>全市场评分和历史榜单均已加密，仅在当前浏览器中解密。</p><form id="unlock-form"><label for="password">访问密码</label><div class="password-row"><input id="password" type="password" autocomplete="current-password" required autofocus><button type="submit">解锁</button></div><div id="error" class="error" role="alert"></div></form><small>密码不会上传或保存；刷新后需要重新输入。</small></section>
   <section id="dashboard" hidden>
     <header><div><div class="brand">CXH · 投资研究</div><h1>跨市场投资筛选台</h1><p id="updated"></p></div><button id="lock-button" class="ghost">锁定</button></header>
-    <section class="notice">评分仅用于缩小研究范围，不构成收益承诺。交易前必须核对实时价格、公告、停复牌、涨跌停与流动性。</section>
+    <section class="notice">评分及推荐买入、卖出、止损价格仅用于缩小研究范围，不构成收益承诺。价格基于当日快照和波动率计算；交易前必须核对实时价格、公告、停复牌、涨跌停与流动性。</section>
     <nav class="tabs" aria-label="数据类型"><button class="tab active" data-view="daily">今日全A前100</button><button class="tab" data-view="history">历史榜单</button><button class="tab" data-view="etfs">场内ETF</button><button class="tab" data-view="stocks">原A股模型</button><button class="tab" data-view="validation">模型验证</button></nav>
     <section id="summary" class="summary-grid"></section>
     <section id="toolbar" class="toolbar"><input id="search" type="search" placeholder="搜索代码或名称"><select id="history-date" hidden></select><span id="count"></span></section>
@@ -12,4 +12,4 @@
     <section id="validation-panel" hidden></section>
     <p class="footnote">全市场历史从自动日更启用日起逐交易日累积；每个日期保留当时的模型版本和前100结果，不回写改分。</p>
   </section>
-</main><script src="app.js?v=7"></script></body></html>
+</main><script src="app.js?v=8"></script></body></html>
